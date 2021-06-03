@@ -10,6 +10,15 @@ repositories {
 }
 
 kotlin {
+    jvm {
+        compilations.all {
+            kotlinOptions.jvmTarget = "1.8"
+        }
+        testRuns["test"].executionTask.configure {
+            useJUnit()
+        }
+    }
+
     listOf(
         linuxX64(),
         macosX64()
@@ -31,6 +40,8 @@ kotlin {
             }
         }
         val commonTest by getting
+
+        val jvmMain by getting { dependsOn(commonMain) }
 
         val nativeMain by creating { dependsOn(commonMain) }
         val nativeTest by creating { dependsOn(commonTest) }
