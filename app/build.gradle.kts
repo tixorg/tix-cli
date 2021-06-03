@@ -42,3 +42,18 @@ kotlin {
         val macosX64Test by getting { dependsOn(nativeTest) }
     }
 }
+
+tasks.register("debugBuild") { cliBuild("Debug") }
+tasks.register("releaseBuild") { cliBuild("Release") }
+
+fun Task.cliBuild(buildType: String) {
+    val taskSuffix = when (System.getProperty("os.name")) {
+        "Mac OS X" -> "MacosX64"
+        "Linux" -> "LinuxX64"
+        else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
+    }
+    val buildTasks = listOf("compileKotlin${taskSuffix}", "link${buildType}Executable${taskSuffix}")
+    buildTasks.forEach {
+        dependsOn(tasks.findByName(it))
+    }
+}
